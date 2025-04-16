@@ -1,0 +1,26 @@
+name: Development CI pipeline
+on:
+  push:
+    branches: [ '*' ]
+  workflow_dispatch:
+
+jobs:
+  linters:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python runtime
+        uses: actions/checkout@v4
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Analyze code
+        run: |
+          python -m mypy app tests
