@@ -5,3 +5,16 @@ addopts = [
 testpaths = [
     "tests",
 ]
+filterwarnings = [
+]
+
+[tool.pyright]
+venvPath = "./venv"
+venv = "./"
+
+[tool.mypy]
+plugins = "sqlalchemy.ext.mypy.plugin"
+ignore_missing_imports = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true

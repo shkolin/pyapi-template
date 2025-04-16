@@ -1,6 +1,6 @@
 -r base.txt
 
-pytest==8.3.3
+pytest==8.3.5
 pytest-mock==3.14.0
-Faker==30.8.2
-mypy==1.13.0
+Faker==37.1.0
+mypy==1.15.0
