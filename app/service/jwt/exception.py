@@ -1,0 +1,2 @@
+class JWTServiceError(RuntimeError):
+    pass
