@@ -19,8 +19,7 @@ class EventLogFormatInterface(Generic[T], ABC):
 
 
 class EventLogFormatFactory:
-    __format_map: dict[EventInterface, type[EventLogFormatInterface]] = {
-    }
+    __format_map: dict[EventInterface, type[EventLogFormatInterface]] = {}
 
     def get_formatter(self, event: EventInterface) -> EventLogFormatInterface:
         if event not in self.__format_map:

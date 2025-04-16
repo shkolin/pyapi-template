@@ -74,7 +74,7 @@ class UnitOfWork(UnitOfWorkInterface):
                 self.commit()
         finally:
             self.close()
-        return None
+            return None
 
     def begin(self) -> None:
         if not self.__entered:

@@ -2,8 +2,8 @@ from abc import ABC
 from abc import abstractmethod
 from uuid import UUID
 
-from src.services.jwt.schemas import DecodedToken
-from src.services.jwt.schemas import EncodedToken
+from app.service.jwt.schema import DecodedToken
+from app.service.jwt.schema import EncodedToken
 
 
 class JWTServiceInterface(ABC):

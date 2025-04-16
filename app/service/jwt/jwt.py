@@ -18,13 +18,10 @@ class JWTService(JWTServiceInterface):
         self.__ttl = ttl
 
     def encode(self, sub: UUID) -> EncodedToken:
+        exp = datetime.now(tz=timezone.utc) + timedelta(seconds=self.__ttl)
         return EncodedToken(
             access_token=jwt.encode(
-                {
-                    'exp': datetime.now(tz=timezone.utc)
-                           + timedelta(seconds=self.__ttl),
-                    'sub': str(sub),
-                },
+                {'exp': exp, 'sub': str(sub)},
                 self.__secret,
                 self.__algorithms,
             ),
