@@ -6,6 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 
+from app.event.manager import EventManager
+from app.handler.container import HandlerContainer
 from app.repository.container import RepositoryContainer
 from app.service.container import ServiceContainer
 from app.uow import UnitOfWork
@@ -32,6 +34,7 @@ class AppContainer(containers.DeclarativeContainer):
         init_database_session, session_init_factory=scoped_session
     )
     unit_of_work = providers.Factory(UnitOfWork, session=session)
+    event_manager = providers.Factory(EventManager)
     service = providers.Container(
         ServiceContainer,
         project_name=config.name,
@@ -48,4 +51,11 @@ class AppContainer(containers.DeclarativeContainer):
         jwt_secret=config.jwt.secret,
         jwt_ttl=config.jwt.ttl
     )
-    repository = providers.Container(RepositoryContainer)
+    repository = providers.Container(RepositoryContainer, session=session)
+    handler = providers.Container(
+        HandlerContainer,
+        repository=repository,
+        service=service,
+        event_manager=event_manager,
+        unit_of_work=unit_of_work
+    )

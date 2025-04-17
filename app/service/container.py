@@ -2,6 +2,7 @@ from dependency_injector import containers
 from dependency_injector import providers
 
 from app.service.jwt import JWTService
+from app.service.mail.user import UserMailService
 from app.service.mailer import Mailer
 from app.service.smtp import SMTPClient
 from app.service.templater import Templater
@@ -47,3 +48,5 @@ class ServiceContainer(containers.DeclarativeContainer):
         service_email=project_email,
         project_name=project_name
     )
+
+    user_mailer = providers.Factory(UserMailService, mailer=mailer)

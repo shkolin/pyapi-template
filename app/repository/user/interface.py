@@ -9,7 +9,11 @@ from app.domain.user.user import User
 
 class UserRepositoryInterface(ABC):
     @abstractmethod
-    def get_by_id(self, obj_id: UUID) -> User | None:
+    def get_by_id(self, obj_id: UUID) -> User:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_by_login(self, login: str) -> User:
         raise NotImplementedError
 
     @abstractmethod

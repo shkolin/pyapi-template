@@ -73,10 +73,9 @@ class UnitOfWork(UnitOfWorkInterface):
                 self.rollback()
                 return False
             else:
-                try:
-                    self.commit()
-                except SQLAlchemyError as e:
-                    raise PersistenceError(str(e))
+                self.commit()
+        except SQLAlchemyError as e:
+            raise PersistenceError(str(e))
         finally:
             self.close()
             return None
