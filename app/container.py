@@ -1,13 +1,37 @@
+from typing import Generator
+
 from dependency_injector import containers
 from dependency_injector import providers
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
 
 from app.repository.container import RepositoryContainer
 from app.service.container import ServiceContainer
+from app.uow import UnitOfWork
+
+
+def init_database_session(session_init_factory: scoped_session) -> Generator:
+    session = session_init_factory()
+    yield session
+    session_init_factory.remove()
 
 
 class AppContainer(containers.DeclarativeContainer):
     config: providers.Configuration = providers.Configuration()
     wiring_config = containers.WiringConfiguration(modules=[])
+    sqlalchemy_engine = providers.Singleton(create_engine, config.db.dsn)
+    session_factory = providers.Singleton(
+        sessionmaker,
+        bind=sqlalchemy_engine,
+        expire_on_commit=False,
+        autoflush=False
+    )
+    scoped_session = providers.Factory(scoped_session, session_factory)
+    session = providers.Resource(
+        init_database_session, session_init_factory=scoped_session
+    )
+    unit_of_work = providers.Factory(UnitOfWork, session=session)
     service = providers.Container(
         ServiceContainer,
         project_name=config.name,

@@ -5,7 +5,7 @@ from datetime import datetime
 from app.domain.user.user import User
 
 
-class ResetLoginRequest:
+class LoginResetRequest:
     def __init__(self, user: User, old_login: str, new_login: str) -> None:
         self.id = uuid.uuid4()
         self.user = user

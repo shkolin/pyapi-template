@@ -1,0 +1,2 @@
+class PersistenceError(RuntimeError):
+    pass

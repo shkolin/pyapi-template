@@ -5,7 +5,7 @@ from datetime import datetime
 from app.domain.user.user import User
 
 
-class ResetPasswordRequest:
+class PasswordResetRequest:
     def __init__(self, user: User) -> None:
         self.id = uuid.uuid4()
         self.token = secrets.token_urlsafe(64)

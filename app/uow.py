@@ -8,9 +8,11 @@ from typing import Type
 from typing import TypeVar
 from typing import cast
 
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.repository.base import BaseRepository
+from app.repository.exception import PersistenceError
 
 RepoType = TypeVar('RepoType', bound=BaseRepository)
 
@@ -71,7 +73,10 @@ class UnitOfWork(UnitOfWorkInterface):
                 self.rollback()
                 return False
             else:
-                self.commit()
+                try:
+                    self.commit()
+                except SQLAlchemyError as e:
+                    raise PersistenceError(str(e))
         finally:
             self.close()
             return None
