@@ -2,9 +2,9 @@ from app.command.user.password import RecoverPasswordCommand
 from app.command.user.password import ResetPasswordRequestCommand
 from app.exception import DomainError
 from app.handler.interface import CommandHandlerInterface
-from app.repository.exception import PasswordResetRequestNotFoundError
 from app.repository.exception import PersistenceError
-from app.repository.exception import UserNotFoundError
+from app.repository.user.exception import PasswordResetRequestNotFoundError
+from app.repository.user.exception import UserNotFoundError
 from app.repository.user.user import UserRepository
 from app.service.mail.user.interface import UserMailServiceInterface
 from app.service.smtp.exception import SMTPClientError

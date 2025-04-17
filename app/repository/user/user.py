@@ -6,9 +6,9 @@ from app.domain.user.login import LoginResetRequest
 from app.domain.user.password import PasswordResetRequest
 from app.domain.user.user import User
 from app.repository.base import BaseRepository
-from app.repository.exception import LoginResetRequestNotFoundError
-from app.repository.exception import PasswordResetRequestNotFoundError
-from app.repository.exception import UserNotFoundError
+from app.repository.user.exception import LoginResetRequestNotFoundError
+from app.repository.user.exception import PasswordResetRequestNotFoundError
+from app.repository.user.exception import UserNotFoundError
 from app.repository.user.interface import UserRepositoryInterface
 
 

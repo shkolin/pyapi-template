@@ -6,7 +6,7 @@ from app.endpoint.exception import AuthorizationError
 from app.exception import DomainError
 from app.handler.interface import CommandHandlerInterface
 from app.repository.exception import PersistenceError
-from app.repository.exception import UserNotFoundError
+from app.repository.user.exception import UserNotFoundError
 from app.repository.user.user import UserRepository
 from app.service.jwt.exception import JWTServiceError
 from app.service.jwt.interface import JWTServiceInterface
