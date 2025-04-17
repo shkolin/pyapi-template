@@ -5,6 +5,9 @@ from app.event.manager import EventManager
 from app.handler.auth import AuthorizationViaCredentialsCommandHandler
 from app.handler.auth import AuthorizationViaTokenCommandHandler
 from app.handler.user.create_user import CreateUserCommandHandler
+from app.handler.user.email import ConfirmEmailCommandHandler
+from app.handler.user.password import RecoverPasswordCommandHandler
+from app.handler.user.password import ResetPasswordRequestCommandHandler
 from app.uow import UnitOfWork
 
 
@@ -29,4 +32,18 @@ class HandlerContainer(containers.DeclarativeContainer):
         AuthorizationViaTokenCommandHandler,
         uow=unit_of_work,
         jwt=service.jwt
+    )
+    reset_password_request = providers.Factory(
+        ResetPasswordRequestCommandHandler,
+        uow=unit_of_work,
+        user_mailer=service.user_mailer
+    )
+    recover_password = providers.Factory(
+        RecoverPasswordCommandHandler,
+        uow=unit_of_work
+    )
+    confirm_email = providers.Factory(
+        ConfirmEmailCommandHandler,
+        uow=unit_of_work,
+        user_mailer=service.user_mailer
     )

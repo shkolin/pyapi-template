@@ -4,3 +4,11 @@ class PersistenceError(RuntimeError):
 
 class UserNotFoundError(RuntimeError):
     pass
+
+
+class PasswordResetRequestNotFoundError(RuntimeError):
+    pass
+
+
+class LoginResetRequestNotFoundError(RuntimeError):
+    pass

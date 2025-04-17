@@ -6,6 +6,8 @@ from app.domain.user.login import LoginResetRequest
 from app.domain.user.password import PasswordResetRequest
 from app.domain.user.user import User
 from app.repository.base import BaseRepository
+from app.repository.exception import LoginResetRequestNotFoundError
+from app.repository.exception import PasswordResetRequestNotFoundError
 from app.repository.exception import UserNotFoundError
 from app.repository.user.interface import UserRepositoryInterface
 
@@ -25,8 +27,18 @@ class UserRepository(BaseRepository[User], UserRepositoryInterface):
             raise UserNotFoundError
         return found
 
-    def get_password_reset_request(self, token: str) -> PasswordResetRequest | None:
-        return None
+    def get_password_reset_request(self, token: str) -> PasswordResetRequest:
+        found = self._session.execute(
+            select(PasswordResetRequest)
+        ).scalar_one_or_none()
+        if not found:
+            raise PasswordResetRequestNotFoundError
+        return found
 
-    def get_login_reset_request(self, token: str) -> LoginResetRequest | None:
-        return None
+    def get_login_reset_request(self, token: str) -> LoginResetRequest:
+        found = self._session.execute(
+            select(LoginResetRequest)
+        ).scalar_one_or_none()
+        if not found:
+            raise LoginResetRequestNotFoundError
+        return found

@@ -17,9 +17,9 @@ class UserRepositoryInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_password_reset_request(self, token: str) -> PasswordResetRequest | None:
+    def get_password_reset_request(self, token: str) -> PasswordResetRequest:
         raise NotImplementedError
 
     @abstractmethod
-    def get_login_reset_request(self, token: str) -> LoginResetRequest | None:
+    def get_login_reset_request(self, token: str) -> LoginResetRequest:
         raise NotImplementedError
