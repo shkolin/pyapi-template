@@ -32,8 +32,8 @@ class User:
         self.date_created = datetime.now()
         self.date_updated: datetime | None = None
 
-        self.reset_password_requests: list[PasswordResetRequest] = []
-        self.reset_login_requests: list[LoginResetRequest] = []
+        self.password_reset_requests: list[PasswordResetRequest] = []
+        self.login_reset_requests: list[LoginResetRequest] = []
 
     @staticmethod
     @inject
@@ -71,11 +71,11 @@ class User:
 
     def reset_password_request(self) -> PasswordResetRequest:
         request = PasswordResetRequest(self)
-        self.reset_password_requests.append(request)
+        self.password_reset_requests.append(request)
         return request
 
     def reset_login_request(self, new_login: str) -> LoginResetRequest:
         self.email_verified = False
         request = LoginResetRequest(self, str(self.email), new_login)
-        self.reset_login_requests.append(request)
+        self.login_reset_requests.append(request)
         return request

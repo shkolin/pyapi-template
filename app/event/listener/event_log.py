@@ -10,6 +10,4 @@ class EventLogListener(EventListenerInterface):
         self.__formatters = EventLogFormatFactory()
 
     def handle(self, event: EventInterface, target: Any, **kwargs: Any) -> None:
-        payload = {}
-        if 'payload' in kwargs:
-            payload = self.__formatters.get_formatter(event).format(kwargs['payload'])
+        pass

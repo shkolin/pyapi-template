@@ -3,6 +3,9 @@ project:
   url: "https://exemple.com"
   email: "info@exemple.com"
 
+db:
+  dsn: "postgresql+psycopg2://user:password@localhost/db_name"
+
 smtp:
   host: "localhost"
   port: 1025

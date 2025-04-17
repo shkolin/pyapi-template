@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 import secrets
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
-from app.domain.user.user import User
+if TYPE_CHECKING:
+    from app.domain.user.user import User
 
 
 class PasswordResetRequest:
