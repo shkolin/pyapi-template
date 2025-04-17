@@ -15,7 +15,7 @@ class SMTPClient(SMTPClientInterface):
             port: int,
             username: str,
             password: str,
-            use_tls: str,
+            use_tls: bool,
             fail_silently: bool = False,
     ) -> None:
         self.host = host
@@ -32,7 +32,7 @@ class SMTPClient(SMTPClientInterface):
             return False
         try:
             self.connection = smtplib.SMTP(self.host, self.port)
-            if self.use_tls == 'yes':
+            if self.use_tls:
                 self.connection.starttls()
             if self.username and self.password:
                 self.connection.login(self.username, self.password)

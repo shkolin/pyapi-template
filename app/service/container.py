@@ -1,5 +1,49 @@
 from dependency_injector import containers
+from dependency_injector import providers
+
+from app.service.jwt import JWTService
+from app.service.mailer import Mailer
+from app.service.smtp import SMTPClient
+from app.service.templater import Templater
 
 
 class ServiceContainer(containers.DeclarativeContainer):
-    pass
+    project_name = providers.Dependency(instance_of=str)
+    project_url = providers.Dependency(instance_of=str)
+    project_email = providers.Dependency(instance_of=str)
+
+    smtp_host = providers.Dependency(instance_of=str)
+    smtp_port = providers.Dependency(instance_of=int)
+    smtp_username = providers.Dependency(instance_of=str)
+    smtp_password = providers.Dependency(instance_of=str)
+    smtp_use_tls = providers.Dependency(instance_of=bool)
+
+    jwt_algorithm = providers.Dependency(instance_of=str)
+    jwt_secret = providers.Dependency(instance_of=str)
+    jwt_ttl = providers.Dependency(instance_of=int)
+
+    smtp = providers.Factory(
+        SMTPClient,
+        host=smtp_host,
+        port=smtp_port,
+        username=smtp_username,
+        password=smtp_password,
+        use_tls=smtp_use_tls
+    )
+
+    jwt = providers.Factory(
+        JWTService,
+        algorithms=jwt_algorithm,
+        secret=jwt_secret,
+        ttl=jwt_ttl
+    )
+
+    templater = providers.Factory(Templater, project_url=project_url)
+
+    mailer = providers.Factory(
+        Mailer,
+        smtp=smtp,
+        templater=templater,
+        service_email=project_email,
+        project_name=project_name
+    )

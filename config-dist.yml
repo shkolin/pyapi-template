@@ -1,1 +1,16 @@
-project_name: "Project Name Exemple"
+project:
+  name: "Project Name Exemple"
+  url: "https://exemple.com"
+  email: "info@exemple.com"
+
+smtp:
+  host: "localhost"
+  port: 1025
+  username: ""
+  password: ""
+  use_tls: false
+
+jwt:
+  algorithm: "HS256"
+  secret: ""
+  ttl: 86400

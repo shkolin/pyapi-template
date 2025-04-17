@@ -15,8 +15,8 @@ from app.service.templater.interface import TemplaterInterface
 
 
 class Templater(TemplaterInterface):
-    def __init__(self, frontend_base_url: str) -> None:
-        self.__frontend_base_url = frontend_base_url
+    def __init__(self, project_url: str) -> None:
+        self.__project_url = project_url
         search_path = Path(__file__).parent.parent.parent.parent.absolute() / 'templates'
         environment = Environment(
             loader=FileSystemLoader([search_path]),
@@ -33,7 +33,7 @@ class Templater(TemplaterInterface):
         return template
 
     def __url(self, path: Optional[str] = None, fragment: Optional[str] = None, **kwargs: Any) -> str:
-        base_url = self.__frontend_base_url
+        base_url = self.__project_url
         url_parts = list(urlparse(base_url))
         url_parts[2] = path or ''
         url_parts[4] = urlencode(kwargs) if kwargs else ''
