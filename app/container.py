@@ -1,5 +1,6 @@
 from typing import Generator
 
+from argon2 import PasswordHasher
 from dependency_injector import containers
 from dependency_injector import providers
 from sqlalchemy import create_engine
@@ -21,7 +22,10 @@ def init_database_session(session_init_factory: scoped_session) -> Generator:
 
 class AppContainer(containers.DeclarativeContainer):
     config: providers.Configuration = providers.Configuration()
-    wiring_config = containers.WiringConfiguration(modules=[])
+    wiring_config = containers.WiringConfiguration(packages=[
+        'app.endpoint',
+        'app.domain'
+    ])
     sqlalchemy_engine = providers.Singleton(create_engine, config.db.dsn)
     session_factory = providers.Singleton(
         sessionmaker,
@@ -35,11 +39,12 @@ class AppContainer(containers.DeclarativeContainer):
     )
     unit_of_work = providers.Factory(UnitOfWork, session=session)
     event_manager = providers.Factory(EventManager)
+    password_hasher = providers.Factory(PasswordHasher)
     service = providers.Container(
         ServiceContainer,
-        project_name=config.name,
-        project_url=config.url,
-        project_email=config.email,
+        project_name=config.project.name,
+        project_url=config.project.url,
+        project_email=config.project.email,
 
         smtp_host=config.smtp.host,
         smtp_port=config.smtp.port,

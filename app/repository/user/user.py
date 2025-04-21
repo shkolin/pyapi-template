@@ -21,7 +21,7 @@ class UserRepository(BaseRepository[User], UserRepositoryInterface):
 
     def get_by_login(self, login: str) -> User:
         found = self._session.execute(
-            select(User)
+            select(User).where(User.email == login)
         ).scalar_one_or_none()
         if not found:
             raise UserNotFoundError
@@ -30,6 +30,7 @@ class UserRepository(BaseRepository[User], UserRepositoryInterface):
     def get_password_reset_request(self, token: str) -> PasswordResetRequest:
         found = self._session.execute(
             select(PasswordResetRequest)
+            .where(PasswordResetRequest.token == token)
         ).scalar_one_or_none()
         if not found:
             raise PasswordResetRequestNotFoundError
@@ -37,7 +38,7 @@ class UserRepository(BaseRepository[User], UserRepositoryInterface):
 
     def get_login_reset_request(self, token: str) -> LoginResetRequest:
         found = self._session.execute(
-            select(LoginResetRequest)
+            select(LoginResetRequest).where(LoginResetRequest.token == token)
         ).scalar_one_or_none()
         if not found:
             raise LoginResetRequestNotFoundError

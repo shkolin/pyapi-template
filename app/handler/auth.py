@@ -43,7 +43,7 @@ class AuthorizationViaTokenCommandHandler(CommandHandlerInterface):
     def __init__(
             self,
             uow: UnitOfWorkInterface,
-            jwt: JWTServiceInterface,
+            jwt: JWTServiceInterface
     ) -> None:
         self.__uow = uow
         self.__jwt = jwt

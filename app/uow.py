@@ -71,14 +71,12 @@ class UnitOfWork(UnitOfWorkInterface):
         try:
             if exc_type:
                 self.rollback()
-                return False
             else:
                 self.commit()
         except SQLAlchemyError as e:
             raise PersistenceError(str(e))
         finally:
             self.close()
-            return None
 
     def begin(self) -> None:
         if not self.__entered:

@@ -32,4 +32,4 @@ class Mailer(MailerInterface):
         self.__smtp.send_messages([message])
 
     def get_template(self, name: str) -> Template:
-        return self.__templater.get_template(f'emails/{name}')
+        return self.__templater.get_template(f'email/{name}')

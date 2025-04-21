@@ -30,12 +30,9 @@ class CreateUserCommandHandler(CommandHandlerInterface):
     def handle(self, command: CreateUserCommand) -> None:
         try:
             with self.__uow as uow:
-                user = User(
-                    email=UserEmail(command.email),
-                    plain_password=UserPassword(command.plain_password),
-                    name=UserName(command.name)
-                )
-                login_reset = user.reset_login_request(command.email)
+                email = UserEmail(command.email)
+                user = User.create(UserName(command.name), email, UserPassword(command.plain_password))
+                login_reset = user.reset_login_request(email)
                 uow.get_repository(UserRepository).add(user)
 
             self.__user_mailer.send_email_confirmation(

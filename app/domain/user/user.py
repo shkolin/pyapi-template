@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 from datetime import datetime
 
@@ -6,7 +8,16 @@ from argon2.exceptions import InvalidHashError
 from argon2.exceptions import VerifyMismatchError
 from dependency_injector.wiring import Provide
 from dependency_injector.wiring import inject
+from sqlalchemy import Boolean
+from sqlalchemy import DateTime
+from sqlalchemy import String
+from sqlalchemy import false
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
 
+from app.domain.base import Base
 from app.domain.user.login import LoginResetRequest
 from app.domain.user.password import PasswordResetRequest
 from app.value_object.user import UserEmail
@@ -14,26 +25,40 @@ from app.value_object.user import UserName
 from app.value_object.user import UserPassword
 
 
-class User:
-    def __init__(
-            self,
-            email: UserEmail,
-            plain_password: UserPassword,
+class User(Base):
+    __tablename__ = 'users'
+
+    id = mapped_column(UUID(True), primary_key=True, index=True, default=uuid.uuid4)
+    email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    last_login_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    email_notify: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=false())
+    email_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=false())
+    auth_provider: Mapped[str | None] = mapped_column(String, nullable=True)
+    auth_provider_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    date_created: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now)
+    date_updated: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+    password_reset_requests: Mapped[list['PasswordResetRequest']] = relationship(
+        'PasswordResetRequest', uselist=True, cascade='all, delete-orphan', back_populates='user'
+    )
+    login_reset_requests: Mapped[list['LoginResetRequest']] = relationship(
+        'LoginResetRequest', uselist=True, cascade='all, delete-orphan', back_populates='user'
+    )
+
+    @classmethod
+    def create(
+            cls,
             name: UserName,
-            email_verified: bool = False
-    ) -> None:
-        self.id = uuid.uuid4()
-        self.email = str(email)
-        self.password = self.__hash_password(plain_password)
-        self.name = str(name)
-        self.last_login_date: datetime | None = None
-        self.email_verified = email_verified
-
-        self.date_created = datetime.now()
-        self.date_updated: datetime | None = None
-
-        self.password_reset_requests: list[PasswordResetRequest] = []
-        self.login_reset_requests: list[LoginResetRequest] = []
+            email: UserEmail,
+            plain_password: UserPassword
+    ) -> User:
+        user = User()
+        user.name = str(name)
+        user.email = str(email)
+        user.password_hash = cls.__password_hasher().hash(str(plain_password))
+        return user
 
     @staticmethod
     @inject
@@ -42,12 +67,9 @@ class User:
     ) -> PasswordHasher:
         return password_hasher
 
-    def __hash_password(self, plain_password: UserPassword) -> str:
-        return self.__password_hasher().hash(str(plain_password))
-
     def verify_password(self, plain_password: str) -> bool:
         try:
-            return self.__password_hasher().verify(self.password, plain_password)
+            return self.__password_hasher().verify(self.password_hash, plain_password)
         except (VerifyMismatchError, InvalidHashError):
             return False
 
@@ -57,11 +79,8 @@ class User:
     def update_last_modified_date(self) -> None:
         self.date_updated = datetime.now()
 
-    def update_name(self, name: UserName) -> None:
-        self.name = str(name)
-
     def update_password(self, plain_password: UserPassword) -> None:
-        self.password = self.__hash_password(plain_password)
+        self.password_hash = self.__password_hasher().hash(str(plain_password))
 
     def update_email(self, email: UserEmail) -> None:
         self.email = str(email)
@@ -70,12 +89,12 @@ class User:
         self.email_verified = True
 
     def reset_password_request(self) -> PasswordResetRequest:
-        request = PasswordResetRequest(self)
+        request = PasswordResetRequest.create(self)
         self.password_reset_requests.append(request)
         return request
 
-    def reset_login_request(self, new_login: str) -> LoginResetRequest:
+    def reset_login_request(self, new_login: UserEmail) -> LoginResetRequest:
         self.email_verified = False
-        request = LoginResetRequest(self, str(self.email), new_login)
+        request = LoginResetRequest.create(self, UserEmail(self.email), new_login)
         self.login_reset_requests.append(request)
         return request
