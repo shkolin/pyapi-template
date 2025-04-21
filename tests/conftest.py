@@ -1,3 +1,4 @@
+from typing import Any
 from typing import Callable
 from typing import Generator
 
@@ -38,7 +39,7 @@ def api_client() -> TestClient:
 
 @pytest.fixture
 def user_factory(faker: Faker) -> Callable[..., User]:
-    def maker(**kwargs) -> User:
+    def maker(**kwargs: Any) -> User:
         return User.create(
             UserName(kwargs.get('name', faker.name())),
             UserEmail(kwargs.get('email', faker.email())),

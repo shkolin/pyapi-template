@@ -31,8 +31,8 @@ class UnitOfWorkInterface(ABC):
             self,
             exc_type: Optional[Type[BaseException]],
             exc_val: Optional[BaseException],
-            exc_tb: Optional[TracebackType],
-    ) -> bool | None:
+            exc_tb: Optional[TracebackType]
+    ) -> None:
         raise NotImplementedError
 
     @abstractmethod
@@ -66,8 +66,8 @@ class UnitOfWork(UnitOfWorkInterface):
             self,
             exc_type: Optional[Type[BaseException]],
             exc_val: Optional[BaseException],
-            exc_tb: Optional[TracebackType],
-    ) -> bool | None:
+            exc_tb: Optional[TracebackType]
+    ) -> None:
         try:
             if exc_type:
                 self.rollback()
@@ -77,6 +77,7 @@ class UnitOfWork(UnitOfWorkInterface):
             raise PersistenceError(str(e))
         finally:
             self.close()
+            return None
 
     def begin(self) -> None:
         if not self.__entered:

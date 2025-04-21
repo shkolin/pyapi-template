@@ -55,7 +55,7 @@ class User(Base):
             email: UserEmail,
             plain_password: UserPassword
     ) -> User:
-        user = User()
+        user = cls()
         user.name = str(name)
         user.email = str(email)
         user.password_hash = cls.__password_hasher().hash(str(plain_password))

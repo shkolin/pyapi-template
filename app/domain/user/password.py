@@ -36,9 +36,9 @@ class PasswordResetRequest(Base):
         'User', back_populates='password_reset_requests'
     )
 
-    @staticmethod
-    def create(user: User) -> PasswordResetRequest:
-        request = PasswordResetRequest()
+    @classmethod
+    def create(cls, user: User) -> PasswordResetRequest:
+        request = cls()
         request.user = user
         request.token = secrets.token_urlsafe(64)
         return request

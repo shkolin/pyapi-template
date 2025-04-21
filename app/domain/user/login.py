@@ -39,9 +39,9 @@ class LoginResetRequest(Base):
         'User', back_populates='login_reset_requests'
     )
 
-    @staticmethod
-    def create(user: User, old_login: UserEmail, new_login: UserEmail) -> LoginResetRequest:
-        request = LoginResetRequest()
+    @classmethod
+    def create(cls, user: User, old_login: UserEmail, new_login: UserEmail) -> LoginResetRequest:
+        request = cls()
         request.user = user
         request.token = secrets.token_urlsafe(64)
         request.old_login = str(old_login)
