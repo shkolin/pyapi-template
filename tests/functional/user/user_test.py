@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.container import AppContainer
 from app.domain.user.user import User
+from app.value_object.user import UserEmail
 
 
 def test_user_creation(
@@ -33,5 +34,81 @@ def test_user_creation(
         assert user.email == email
         assert di_container.password_hasher().verify(user.password_hash, plain_password) is True
         assert user.name == request_data['name']
+        session.delete(user)
+        session.commit()
+
+
+def test_reset_password_request(
+        session_factory: Callable[..., Session],
+        user_factory: Callable[..., User],
+        api_client: TestClient
+) -> None:
+    with session_factory() as session:
+        user = user_factory()
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        assert len(user.password_reset_requests) == 0
+        response = api_client.post(
+            '/reset-password-request', json={'email': user.email}
+        )
+        assert response.status_code == 200
+        assert response.json() == {'status': 'OK'}
+        session.refresh(user)
+        assert len(user.password_reset_requests) == 1
+        assert user.password_reset_requests[0].is_used is False
+        assert user.password_reset_requests[0].date_used is None
+        session.delete(user)
+        session.commit()
+
+
+def test_recover_password(
+        session_factory: Callable[..., Session],
+        user_factory: Callable[..., User],
+        di_container: AppContainer,
+        api_client: TestClient
+) -> None:
+    with session_factory() as session:
+        user = user_factory()
+        request = user.reset_password_request()
+        session.add(user)
+        session.commit()
+        new_plain_password = 'P@$$w0rd'
+        response = api_client.post(
+            '/recover-password',
+            json={'plain_password': new_plain_password, 'token': request.token},
+        )
+        assert response.status_code == 200
+        assert response.json() == {'status': 'OK'}
+        session.refresh(user)
+        assert di_container.password_hasher().verify(user.password_hash, new_plain_password) is True
+        session.refresh(request)
+        assert request.is_used is True
+        session.delete(user)
+        session.commit()
+
+
+def test_confirm_email(
+        session_factory: Callable[..., Session],
+        user_factory: Callable[..., User],
+        api_client: TestClient,
+        faker: Faker
+) -> None:
+    with session_factory() as session:
+        old_email = faker.email()
+        new_email = faker.email()
+        user = user_factory(email=old_email)
+        request = user.reset_login_request(UserEmail(new_email))
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        assert user.email_verified is False
+        assert len(user.login_reset_requests) == 1
+        response = api_client.post('/confirm-email', json={'token': request.token})
+        assert response.status_code == 200
+        assert response.json() == {'status': 'OK'}
+        session.refresh(user)
+        assert user.email == new_email
+        assert user.email_verified is True
         session.delete(user)
         session.commit()

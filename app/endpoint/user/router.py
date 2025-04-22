@@ -24,7 +24,7 @@ def create_user(
         request: CreateUserRequest,
         handler: CommandHandlerInterface[CreateUserCommand, None] = Depends(
             Provide[AppContainer.handler.create_user]
-        ),
+        )
 ) -> GeneralSuccessResponse:
     handler.handle(CreateUserCommand(**request.model_dump()))
     return GeneralSuccessResponse()
@@ -36,7 +36,7 @@ def reset_password_request(
         request: ResetPasswordRequest,
         handler: CommandHandlerInterface[ResetPasswordRequestCommand, None] = Depends(
             Provide[AppContainer.handler.reset_password_request]
-        ),
+        )
 ) -> GeneralSuccessResponse:
     handler.handle(ResetPasswordRequestCommand(**request.model_dump()))
     return GeneralSuccessResponse()
@@ -48,7 +48,7 @@ def recover_password(
         request: RecoverPasswordRequest,
         handler: CommandHandlerInterface[RecoverPasswordCommand, None] = Depends(
             Provide[AppContainer.handler.recover_password]
-        ),
+        )
 ) -> GeneralSuccessResponse:
     handler.handle(RecoverPasswordCommand(**request.model_dump()))
     return GeneralSuccessResponse()
@@ -60,7 +60,7 @@ def confirm_email(
         token: str = Body(embed=True),
         handler: CommandHandlerInterface[ConfirmEmailCommand, None] = Depends(
             Provide[AppContainer.handler.confirm_email]
-        ),
+        )
 ) -> GeneralSuccessResponse:
     handler.handle(ConfirmEmailCommand(token=token))
     return GeneralSuccessResponse()

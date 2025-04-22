@@ -26,7 +26,7 @@ class PasswordResetRequest(Base):
     __tablename__ = 'password_reset_requests'
 
     id: Mapped[UUID] = mapped_column(postgresql.UUID(True), primary_key=True, index=True, default=uuid.uuid4)
-    user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'), nullable=False)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     token: Mapped[str] = mapped_column(String, nullable=False, index=True)
     is_used: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=false())
     date_requested: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now)

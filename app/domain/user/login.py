@@ -27,7 +27,7 @@ class LoginResetRequest(Base):
     __tablename__ = 'login_reset_requests'
 
     id: Mapped[UUID] = mapped_column(postgresql.UUID(True), primary_key=True, index=True, default=uuid.uuid4)
-    user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'), nullable=False)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     token: Mapped[str] = mapped_column(String, nullable=False)
     old_login: Mapped[str] = mapped_column(String, nullable=False)
     new_login: Mapped[str] = mapped_column(String, nullable=False)
@@ -40,7 +40,12 @@ class LoginResetRequest(Base):
     )
 
     @classmethod
-    def create(cls, user: User, old_login: UserEmail, new_login: UserEmail) -> LoginResetRequest:
+    def create(
+            cls,
+            user: User,
+            old_login: UserEmail,
+            new_login: UserEmail
+    ) -> LoginResetRequest:
         request = cls()
         request.user = user
         request.token = secrets.token_urlsafe(64)

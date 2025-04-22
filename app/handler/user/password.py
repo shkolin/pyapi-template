@@ -26,6 +26,7 @@ class ResetPasswordRequestCommandHandler(CommandHandlerInterface):
             with self.__uow as uow:
                 user = uow.get_repository(UserRepository).get_by_login(command.email)
                 request = user.reset_password_request()
+
             self.__user_mailer.send_password_reset(
                 user.email, user.name, request.token
             )
