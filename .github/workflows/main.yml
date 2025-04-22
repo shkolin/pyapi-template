@@ -35,3 +35,49 @@ jobs:
         run: |
           source venv/bin/activate
           python -m mypy app tests
+
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: ytjyjdsq
+          POSTGRES_USER: test_user
+          POSTGRES_DB: test_db
+        # wait postgres to start
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --name postgres_container
+        ports:
+          - 5432:5432
+      mailcather:
+        image: schickling/mailcatcher
+        ports:
+          - 1025:1025
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+      - name: cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip
+      - name: build and test
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements/dev.txt
+          cp config-dist.yml config.yml
+          python -m alembic upgrade head
+          python -m pytest tests
