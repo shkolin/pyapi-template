@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
 from app.container import AppContainer
-from app.domain import Base
-from app.domain import User
+from app.domain.base import Base
+from app.domain.user.user import User
 from app.main import app
 from app.main import container
 from app.value_object.user import UserEmail
