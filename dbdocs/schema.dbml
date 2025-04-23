@@ -13,3 +13,23 @@ Table users {
     date_created datetime [not null]
     date_updated datetime [null]
 }
+
+Table password_reset_requests {
+    id uuid [pk]
+    user_id uuid  [ref: > users.id]
+    token varchar [not null]
+    is_used boolean [default: false]
+    date_requested datetime
+    date_used datetime [null]
+}
+
+Table login_reset_requests {
+    id uuid [pk]
+    user_id uuid  [ref: > users.id]
+    token varchar [not null]
+    old_login varchar [not null]
+    new_login varchar [not null]
+    is_used boolean [default: false]
+    date_requested datetime
+    date_used datetime [null]
+}
