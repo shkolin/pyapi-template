@@ -1,4 +1,4 @@
-ENV := prod
+ENV ?= prod
 PYTHON := venv/bin/python
 
 venv:
