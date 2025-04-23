@@ -46,12 +46,12 @@ class LoginResetRequest(Base):
             old_login: UserEmail,
             new_login: UserEmail
     ) -> LoginResetRequest:
-        request = cls()
-        request.user = user
-        request.token = secrets.token_urlsafe(64)
-        request.old_login = str(old_login)
-        request.new_login = str(new_login)
-        return request
+        obj = cls()
+        obj.user = user
+        obj.token = secrets.token_urlsafe(64)
+        obj.old_login = str(old_login)
+        obj.new_login = str(new_login)
+        return obj
 
     def verify_token(self) -> None:
         self.date_used = datetime.now()

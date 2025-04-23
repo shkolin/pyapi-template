@@ -55,7 +55,7 @@ class EventLog(Base):
             user: Optional['User'],
             admin: Optional['Admin']
     ) -> EventLog:
-        obj = EventLog()
+        obj = cls()
         obj.event = event
         obj.entity = entity
         obj.entity_id = entity_id

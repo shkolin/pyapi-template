@@ -1,0 +1,15 @@
+Project database {
+    database_type: 'PostgreSQL'
+}
+
+Table users {
+    id uuid [pk]
+    email varchar [not null, unique]
+    password_hash varchar [not null]
+    name varchar [not null]
+    last_login_date datetime [null]
+    email_verified boolean [default: false]
+
+    date_created datetime [not null]
+    date_updated datetime [null]
+}

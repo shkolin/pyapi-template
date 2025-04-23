@@ -38,10 +38,10 @@ class PasswordResetRequest(Base):
 
     @classmethod
     def create(cls, user: User) -> PasswordResetRequest:
-        request = cls()
-        request.user = user
-        request.token = secrets.token_urlsafe(64)
-        return request
+        obj = cls()
+        obj.user = user
+        obj.token = secrets.token_urlsafe(64)
+        return obj
 
     def verify_token(self) -> None:
         self.date_used = datetime.now()

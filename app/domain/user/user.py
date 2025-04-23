@@ -35,10 +35,7 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String, nullable=False)
     name: Mapped[str] = mapped_column(String, nullable=False)
     last_login_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    email_notify: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=false())
     email_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=false())
-    auth_provider: Mapped[str | None] = mapped_column(String, nullable=True)
-    auth_provider_id: Mapped[str | None] = mapped_column(String, nullable=True)
     date_created: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now)
     date_updated: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
@@ -59,11 +56,11 @@ class User(Base):
             email: UserEmail,
             plain_password: UserPassword
     ) -> User:
-        user = cls()
-        user.name = str(name)
-        user.email = str(email)
-        user.password_hash = cls.__password_hasher().hash(str(plain_password))
-        return user
+        obj = cls()
+        obj.name = str(name)
+        obj.email = str(email)
+        obj.password_hash = cls.__password_hasher().hash(str(plain_password))
+        return obj
 
     @staticmethod
     @inject
