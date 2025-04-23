@@ -7,6 +7,8 @@ on:
 jobs:
   linters:
     runs-on: ubuntu-latest
+    env:
+      ENV: 'dev'
 
     strategy:
       matrix:
@@ -24,20 +26,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv venv
-          ./venv/bin/python -m pip install --upgrade pip
-          ./venv/bin/python -m pip install -r requirements/dev.txt
+          make setup_python
 
-      - name: Run MyPy
+      - name: Analyze code
         run: |
-          ./venv/bin/python -m mypy app tests
-
-      - name: Run Ruff
-        run: |
-          ./venv/bin/python -m ruff check app tests
+          make lint
+          make typecheck
 
   tests:
     runs-on: ubuntu-latest
+    env:
+      ENV: 'dev'
 
     services:
       postgres:
@@ -76,12 +75,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv venv
-          ./venv/bin/python -m pip install --upgrade pip
-          ./venv/bin/python -m pip install -r requirements/dev.txt
+          make setup_python
 
       - name: Run Migrations & Tests
         run: |
           cp config-dist.yml config.yml
-          ./venv/bin/python -m alembic upgrade head
-          ./venv/bin/python -m pytest tests
+          make migrate
+          make functional_test
