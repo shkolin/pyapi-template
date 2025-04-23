@@ -15,10 +15,10 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
 from app.domain.base import Base
-from app.domain.user.user import User
 from app.event.interface import EventInterface
 
 if TYPE_CHECKING:
+    from app.domain.user.user import User
     from app.domain.admin.admin import Admin
 
 
@@ -52,8 +52,8 @@ class EventLog(Base):
             entity: str,
             entity_id: UUID,
             payload: dict,
-            user: User | None,
-            admin: Admin | None
+            user: Optional['User'],
+            admin: Optional['Admin']
     ) -> EventLog:
         obj = EventLog()
         obj.event = event

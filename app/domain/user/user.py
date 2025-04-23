@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 from argon2 import PasswordHasher
@@ -20,14 +19,12 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
 from app.domain.base import Base
+from app.domain.event_log import EventLog
 from app.domain.user.login import LoginResetRequest
 from app.domain.user.password import PasswordResetRequest
 from app.value_object.user import UserEmail
 from app.value_object.user import UserName
 from app.value_object.user import UserPassword
-
-if TYPE_CHECKING:
-    from app.domain.event_log import EventLog
 
 
 class User(Base):

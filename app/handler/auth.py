@@ -53,6 +53,8 @@ class AuthorizationViaTokenCommandHandler(CommandHandlerInterface):
             with self.__uow as uow:
                 data = self.__jwt.decode(command.token)
                 user = uow.get_repository(UserRepository).get_by_id(data.sub)
+                if not user.email_verified:
+                    raise AuthorizationError('Email not verified')
                 user.update_last_login_date()
             return user
         except (JWTServiceError, UserNotFoundError):
