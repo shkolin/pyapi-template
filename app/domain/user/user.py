@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from argon2 import PasswordHasher
@@ -25,6 +26,9 @@ from app.value_object.user import UserEmail
 from app.value_object.user import UserName
 from app.value_object.user import UserPassword
 
+if TYPE_CHECKING:
+    from app.domain.event_log import EventLog
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -46,6 +50,9 @@ class User(Base):
     )
     login_reset_requests: Mapped[list['LoginResetRequest']] = relationship(
         'LoginResetRequest', uselist=True, cascade='all, delete-orphan', back_populates='user'
+    )
+    events_log: Mapped[list['EventLog']] = relationship(
+        'EventLog', uselist=True, cascade='all, delete-orphan', back_populates='user'
     )
 
     @classmethod

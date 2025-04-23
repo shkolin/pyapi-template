@@ -36,7 +36,8 @@ class HandlerContainer(containers.DeclarativeContainer):
     reset_password_request = providers.Factory(
         ResetPasswordRequestCommandHandler,
         uow=unit_of_work,
-        user_mailer=service.user_mailer
+        user_mailer=service.user_mailer,
+        event_manager=event_manager
     )
     recover_password = providers.Factory(
         RecoverPasswordCommandHandler,

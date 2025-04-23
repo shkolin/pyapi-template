@@ -24,7 +24,8 @@ class AppContainer(containers.DeclarativeContainer):
     config: providers.Configuration = providers.Configuration()
     wiring_config = containers.WiringConfiguration(packages=[
         'app.endpoint',
-        'app.domain'
+        'app.domain',
+        'app.event'
     ])
     sqlalchemy_engine = providers.Singleton(create_engine, config.db.dsn)
     session_factory = providers.Singleton(

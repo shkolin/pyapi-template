@@ -1,5 +1,8 @@
 from app.command.user.password import RecoverPasswordCommand
 from app.command.user.password import ResetPasswordRequestCommand
+from app.event.event import UserEvent
+from app.event.interface import EventManagerInterface
+from app.event.listener.event_log import EventLogListener
 from app.exception import DomainError
 from app.handler.interface import CommandHandlerInterface
 from app.repository.exception import PersistenceError
@@ -16,10 +19,14 @@ class ResetPasswordRequestCommandHandler(CommandHandlerInterface):
     def __init__(
             self,
             uow: UnitOfWorkInterface,
-            user_mailer: UserMailServiceInterface
+            user_mailer: UserMailServiceInterface,
+            event_manager: EventManagerInterface
     ) -> None:
         self.__uow = uow
         self.__user_mailer = user_mailer
+        self.__event_manager = event_manager
+
+        self.__event_manager.subscribe(EventLogListener())
 
     def handle(self, command: ResetPasswordRequestCommand) -> None:
         try:
@@ -27,6 +34,9 @@ class ResetPasswordRequestCommandHandler(CommandHandlerInterface):
                 user = uow.get_repository(UserRepository).get_by_login(command.email)
                 request = user.reset_password_request()
 
+            self.__event_manager.notify(
+                UserEvent.RESET_PASSWORD_REQUESTED, user, payload=command, user=user
+            )
             self.__user_mailer.send_password_reset(
                 user.email, user.name, request.token
             )

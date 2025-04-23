@@ -1,5 +1,6 @@
 from app.command.user.create_user import CreateUserCommand
 from app.domain.user.user import User
+from app.event.event import UserEvent
 from app.event.interface import EventManagerInterface
 from app.event.listener.event_log import EventLogListener
 from app.exception import DomainError
@@ -35,6 +36,9 @@ class CreateUserCommandHandler(CommandHandlerInterface):
                 login_reset = user.reset_login_request(email)
                 uow.get_repository(UserRepository).add(user)
 
+            self.__event_manager.notify(
+                UserEvent.REGISTERED, user, payload=command, user=user
+            )
             self.__user_mailer.send_email_confirmation(
                 user.email, user.name, login_reset.token
             )
