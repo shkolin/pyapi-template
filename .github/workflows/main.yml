@@ -7,37 +7,38 @@ on:
 jobs:
   linters:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [ '3.12', '3.13' ]
+
     steps:
-      - name: Setup Python runtime
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
-
-      - name: Cache pip dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/dev.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: ${{ matrix.python-version }}
+          cache: pip
 
       - name: Install dependencies
         run: |
           python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements/dev.txt
+          ./venv/bin/pip install --upgrade pip
+          ./venv/bin/pip install -r requirements/dev.txt
 
-      - name: Analyze code
+      - name: Run MyPy
         run: |
-          source venv/bin/activate
-          python -m mypy app tests
+          ./venv/bin/mypy app tests
+
+      - name: Run Ruff
+        run: |
+          ./venv/bin/ruff check app tests
 
   tests:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres
@@ -58,26 +59,29 @@ jobs:
         image: schickling/mailcatcher
         ports:
           - 1025:1025
+
+    strategy:
+      matrix:
+        python-version: [ '3.12', '3.13' ]
+
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: setup python
-        uses: actions/setup-python@v4
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
-      - name: cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/dev.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip
-      - name: build and test
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
         run: |
           python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements/dev.txt
+          ./venv/bin/pip install --upgrade pip
+          ./venv/bin/pip install -r requirements/dev.txt
+
+      - name: Run Migrations & Tests
+        run: |
           cp config-dist.yml config.yml
-          python -m alembic upgrade head
-          python -m pytest tests
+          ./venv/bin/alembic upgrade head
+          ./venv/bin/pytest tests
