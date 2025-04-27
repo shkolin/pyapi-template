@@ -45,8 +45,8 @@ class ServiceContainer(containers.DeclarativeContainer):
         Mailer,
         smtp=smtp,
         templater=templater,
-        service_email=project_email,
-        project_name=project_name
+        from_email=project_email,
+        from_name=project_name
     )
 
     user_mailer = providers.Factory(UserMailService, mailer=mailer)

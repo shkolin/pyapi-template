@@ -12,3 +12,7 @@ class MailerInterface(ABC):
     @abstractmethod
     def get_template(self, name: str) -> Template:
         raise NotImplementedError
+
+    @abstractmethod
+    def _format_from(self) -> str:
+        raise NotImplementedError
