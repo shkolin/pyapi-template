@@ -32,7 +32,10 @@ class CreateUserCommandHandler(CommandHandlerInterface):
         try:
             with self.__uow as uow:
                 email = UserEmail(command.email)
-                user = User.create(UserName(command.name), email, UserPassword(command.plain_password))
+                user = User(
+                    UserName(command.name), email,
+                    UserPassword(command.plain_password)
+                )
                 login_reset = user.reset_login_request(email)
                 uow.get_repository(UserRepository).add(user)
 

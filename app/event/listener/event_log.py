@@ -26,7 +26,7 @@ class EventLogListener(EventListenerInterface):
         if 'payload' in kwargs:
             payload = self.__formatters.get_formatter(event).format(kwargs['payload'])
 
-        event_log = EventLog.create(
+        event_log = EventLog(
             event, target.__class__.__name__, target.id, payload, user, admin
         )
 

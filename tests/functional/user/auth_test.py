@@ -10,10 +10,10 @@ from app.service.jwt.schema import DecodedToken
 
 
 def test_authorization_via_credentials(
-        session_factory: Callable[..., Session],
-        user_factory: Callable[..., User],
-        di_container: AppContainer,
-        api_client: TestClient
+    session_factory: Callable[..., Session],
+    user_factory: Callable[..., User],
+    di_container: AppContainer,
+    api_client: TestClient,
 ) -> None:
     with session_factory() as session:
         plain_password = 'P@$$w0rd'
@@ -21,10 +21,9 @@ def test_authorization_via_credentials(
         user.confirm_email()
         session.add(user)
         session.commit()
-        response = api_client.post('/auth', data={
-            'username': user.email,
-            'password': plain_password
-        })
+        response = api_client.post(
+            '/auth', data={'username': user.email, 'password': plain_password}
+        )
         assert response.status_code == 200
         json = response.json()
         assert json['token_type'] == 'bearer'

@@ -5,6 +5,9 @@ from sqlalchemy import select
 from app.domain.user.login import LoginResetRequest
 from app.domain.user.password import PasswordResetRequest
 from app.domain.user.user import User
+from app.mapping.user import LoginResetRequestTable
+from app.mapping.user import PasswordResetRequestTable
+from app.mapping.user import UserTable
 from app.repository.base import BaseRepository
 from app.repository.user.exception import LoginResetRequestNotFoundError
 from app.repository.user.exception import PasswordResetRequestNotFoundError
@@ -21,7 +24,7 @@ class UserRepository(BaseRepository[User], UserRepositoryInterface):
 
     def get_by_login(self, login: str) -> User:
         found = self._session.execute(
-            select(User).where(User.email == login)
+            select(User).where(UserTable.c.email == login)
         ).scalar_one_or_none()
         if not found:
             raise UserNotFoundError
@@ -29,10 +32,9 @@ class UserRepository(BaseRepository[User], UserRepositoryInterface):
 
     def get_password_reset_request(self, token: str) -> PasswordResetRequest:
         found = self._session.execute(
-            select(PasswordResetRequest)
-            .where(
-                PasswordResetRequest.token == token,
-                PasswordResetRequest.is_used.is_not(True)
+            select(PasswordResetRequest).where(
+                PasswordResetRequestTable.c.token == token,
+                PasswordResetRequestTable.c.is_used.is_not(True)
             )
         ).scalar_one_or_none()
         if not found:
@@ -41,10 +43,9 @@ class UserRepository(BaseRepository[User], UserRepositoryInterface):
 
     def get_login_reset_request(self, token: str) -> LoginResetRequest:
         found = self._session.execute(
-            select(LoginResetRequest)
-            .where(
-                LoginResetRequest.token == token,
-                LoginResetRequest.is_used.is_not(True)
+            select(LoginResetRequest).where(
+                LoginResetRequestTable.c.token == token,
+                LoginResetRequestTable.c.is_used.is_not(True)
             )
         ).scalar_one_or_none()
         if not found:

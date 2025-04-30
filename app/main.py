@@ -9,6 +9,7 @@ from app.endpoint.handler import domain_error_handler
 from app.endpoint.handler import unauthorized_exception_handler
 from app.endpoint.user.router import router as user_router
 from app.exception import DomainError
+from app.mapping import perform_mapping
 
 BASE_PATH = Path(__file__).parent.parent.absolute()
 ENV_CONFIG = Path(BASE_PATH / 'config.yml')
@@ -21,6 +22,7 @@ container.config.from_yaml(ENV_CONFIG)
 
 
 def create_app() -> FastAPI:
+    perform_mapping()
     api = FastAPI()
     api.include_router(auth_router, tags=['auth'])
     api.include_router(user_router, tags=['users'])

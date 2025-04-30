@@ -1,30 +1,36 @@
-from __future__ import annotations
-
 import uuid
 from datetime import datetime
-from uuid import UUID
 
-from sqlalchemy import DateTime
-from sqlalchemy import String
-from sqlalchemy.dialects import postgresql
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
+from argon2 import PasswordHasher
+from argon2.exceptions import InvalidHashError
+from argon2.exceptions import VerifyMismatchError
+from dependency_injector.wiring import Provide
+from dependency_injector.wiring import inject
 
-from app.domain.base import Base
 from app.domain.event_log import EventLog
 
 
-class Admin(Base):
-    __tablename__ = 'admins'
+class Admin:
+    def __init__(self, email: str, plain_password: str) -> None:
+        self.id = uuid.uuid4()
+        self.email = email
+        self.password_hash = self.__password_hasher().hash(plain_password)
+        self.last_login_date: datetime | None = None
 
-    id: Mapped[UUID] = mapped_column(postgresql.UUID(True), primary_key=True, index=True, default=uuid.uuid4)
-    email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
-    password_hash: Mapped[str] = mapped_column(String, nullable=False)
-    last_login_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    date_created: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now)
-    date_updated: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+        self.date_created = datetime.now()
+        self.date_updated: datetime | None = None
 
-    events_log: Mapped[list['EventLog']] = relationship(
-        'EventLog', uselist=True, cascade='all, delete-orphan', back_populates='admin'
-    )
+        self.events_log: list[EventLog] = []
+
+    @staticmethod
+    @inject
+    def __password_hasher(
+            password_hasher: PasswordHasher = Provide['password_hasher']
+    ) -> PasswordHasher:
+        return password_hasher
+
+    def verify_password(self, plain_password: str) -> bool:
+        try:
+            return self.__password_hasher().verify(self.password_hash, plain_password)
+        except (VerifyMismatchError, InvalidHashError):
+            return False
