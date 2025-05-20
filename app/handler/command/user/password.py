@@ -17,10 +17,10 @@ from app.value_object.user import UserPassword
 
 class ResetPasswordRequestCommandHandler(CommandHandlerInterface):
     def __init__(
-            self,
-            uow: UnitOfWorkInterface,
-            user_mailer: UserMailServiceInterface,
-            event_manager: EventManagerInterface
+        self,
+        uow: UnitOfWorkInterface,
+        user_mailer: UserMailServiceInterface,
+        event_manager: EventManagerInterface,
     ) -> None:
         self.__uow = uow
         self.__user_mailer = user_mailer
@@ -37,9 +37,7 @@ class ResetPasswordRequestCommandHandler(CommandHandlerInterface):
             self.__event_manager.notify(
                 UserEvent.RESET_PASSWORD_REQUESTED, user, payload=command, user=user
             )
-            self.__user_mailer.send_password_reset(
-                user.email, user.name, request.token
-            )
+            self.__user_mailer.send_password_reset(user.email, user.name, request.token)
         except (UserNotFoundError, PersistenceError):
             raise DomainError('Failed to reset password request')
         except SMTPClientError:

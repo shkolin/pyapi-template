@@ -17,10 +17,10 @@ from app.value_object.user import UserPassword
 
 class CreateUserCommandHandler(CommandHandlerInterface):
     def __init__(
-            self,
-            user_mailer: UserMailServiceInterface,
-            event_manager: EventManagerInterface,
-            uow: UnitOfWorkInterface
+        self,
+        user_mailer: UserMailServiceInterface,
+        event_manager: EventManagerInterface,
+        uow: UnitOfWorkInterface,
     ) -> None:
         self.__event_manager = event_manager
         self.__user_mailer = user_mailer
@@ -31,12 +31,12 @@ class CreateUserCommandHandler(CommandHandlerInterface):
     def handle(self, command: CreateUserCommand) -> None:
         try:
             with self.__uow as uow:
-                email = UserEmail(command.email)
                 user = User(
-                    UserName(command.name), email,
-                    UserPassword(command.plain_password)
+                    UserName(command.name),
+                    UserEmail(command.email),
+                    UserPassword(command.plain_password),
                 )
-                login_reset = user.reset_login_request(email)
+                login_reset = user.reset_login_request(UserEmail(command.email))
                 uow.get_repository(UserRepository).add(user)
 
             self.__event_manager.notify(

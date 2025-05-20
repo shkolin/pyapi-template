@@ -4,15 +4,14 @@ from app.handler.interface import CommandHandlerInterface
 from app.repository.user.exception import LoginResetRequestNotFoundError
 from app.repository.user.user import UserRepository
 from app.service.mail.user.interface import UserMailServiceInterface
+from app.service.smtp.exception import SMTPClientError
 from app.uow import UnitOfWorkInterface
 from app.value_object.user import UserEmail
 
 
 class ConfirmEmailCommandHandler(CommandHandlerInterface):
     def __init__(
-            self,
-            uow: UnitOfWorkInterface,
-            user_mailer: UserMailServiceInterface
+        self, uow: UnitOfWorkInterface, user_mailer: UserMailServiceInterface
     ) -> None:
         self.__uow = uow
         self.__user_mailer = user_mailer
@@ -28,3 +27,5 @@ class ConfirmEmailCommandHandler(CommandHandlerInterface):
             self.__user_mailer.send_welcome(request.user.email, request.user.name)
         except LoginResetRequestNotFoundError:
             raise DomainError('Failed to confirm email address')
+        except SMTPClientError:
+            raise DomainError('Failed to send notification')
