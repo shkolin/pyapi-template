@@ -19,3 +19,8 @@ typecheck:
 
 functional_test:
 	$(PYTHON) -m pytest tests/functional
+
+unit_test:
+	$(PYTHON) -m pytest tests/unit
+
+tests: unit_test functional_test
