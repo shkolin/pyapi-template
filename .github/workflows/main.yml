@@ -45,7 +45,7 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: p@$$W0rd
+          POSTGRES_PASSWORD: pA$$W0rd
           POSTGRES_USER: test_user
           POSTGRES_DB: test_db
         # wait postgres to start
