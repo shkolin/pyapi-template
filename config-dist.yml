@@ -4,7 +4,7 @@ project:
   email: "info@exemple.com"
 
 db:
-  dsn: "postgresql+psycopg2://test_user:ytjyjdsq@localhost/test_db"
+  dsn: "postgresql+psycopg2://test_user:p@$$W0rd@localhost/test_db"
 
 smtp:
   host: "localhost"
