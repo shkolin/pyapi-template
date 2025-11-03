@@ -2,7 +2,7 @@ fastapi==0.120.1
 SQLAlchemy==2.0.44
 dependency-injector==4.48.2
 pydantic==2.12.3
-alembic==1.17.0
+alembic==1.17.1
 psycopg2==2.9.11
 uvicorn==0.38.0
 PyYAML==6.0.3
