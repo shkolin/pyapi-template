@@ -1,9 +1,8 @@
 import uuid
-from datetime import datetime
-
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError
 from argon2.exceptions import VerifyMismatchError
+from datetime import datetime
 from dependency_injector.wiring import Provide
 from dependency_injector.wiring import inject
 
@@ -17,10 +16,10 @@ from app.value_object.user import UserPassword
 
 class User:
     def __init__(
-            self,
-            name: UserName,
-            email: UserEmail,
-            plain_password: UserPassword
+        self,
+        name: UserName,
+        email: UserEmail,
+        plain_password: UserPassword,
     ) -> None:
         self.id = uuid.uuid4()
         self.email = str(email)
@@ -39,7 +38,7 @@ class User:
     @staticmethod
     @inject
     def __password_hasher(
-            password_hasher: PasswordHasher = Provide['password_hasher'],
+        password_hasher: PasswordHasher = Provide['password_hasher'],
     ) -> PasswordHasher:
         return password_hasher
 

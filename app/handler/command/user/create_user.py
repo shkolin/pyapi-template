@@ -8,7 +8,7 @@ from app.handler.interface import CommandHandlerInterface
 from app.repository.exception import PersistenceError
 from app.repository.user.user import UserRepository
 from app.service.mail.user.interface import UserMailServiceInterface
-from app.service.smtp.exception import SMTPClientError
+from app.service.mailer.exception import MailerError
 from app.uow import UnitOfWorkInterface
 from app.value_object.user import UserEmail
 from app.value_object.user import UserName
@@ -47,5 +47,5 @@ class CreateUserCommandHandler(CommandHandlerInterface):
             )
         except PersistenceError:
             raise DomainError('Failed to create user')
-        except SMTPClientError:
+        except MailerError:
             raise DomainError('Failed to send notification')

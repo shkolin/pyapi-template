@@ -4,7 +4,7 @@ from app.handler.interface import CommandHandlerInterface
 from app.repository.user.exception import LoginResetRequestNotFoundError
 from app.repository.user.user import UserRepository
 from app.service.mail.user.interface import UserMailServiceInterface
-from app.service.smtp.exception import SMTPClientError
+from app.service.mailer.exception import MailerError
 from app.uow import UnitOfWorkInterface
 from app.value_object.user import UserEmail
 
@@ -27,5 +27,5 @@ class ConfirmEmailCommandHandler(CommandHandlerInterface):
             self.__user_mailer.send_welcome(request.user.email, request.user.name)
         except LoginResetRequestNotFoundError:
             raise DomainError('Failed to confirm email address')
-        except SMTPClientError:
+        except MailerError:
             raise DomainError('Failed to send notification')

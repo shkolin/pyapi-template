@@ -10,7 +10,7 @@ from app.repository.user.exception import PasswordResetRequestNotFoundError
 from app.repository.user.exception import UserNotFoundError
 from app.repository.user.user import UserRepository
 from app.service.mail.user.interface import UserMailServiceInterface
-from app.service.smtp.exception import SMTPClientError
+from app.service.mailer.exception import MailerError
 from app.uow import UnitOfWorkInterface
 from app.value_object.user import UserPassword
 
@@ -40,7 +40,7 @@ class ResetPasswordRequestCommandHandler(CommandHandlerInterface):
             self.__user_mailer.send_password_reset(user.email, user.name, request.token)
         except (UserNotFoundError, PersistenceError):
             raise DomainError('Failed to reset password request')
-        except SMTPClientError:
+        except MailerError:
             raise DomainError('Failed to send notification')
 
 

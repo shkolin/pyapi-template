@@ -1,5 +1,6 @@
 from abc import ABC
 from abc import abstractmethod
+from typing import Union
 
 from jinja2 import Template
 
@@ -14,5 +15,5 @@ class MailerInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _format_from(self) -> str:
+    def _format_from(self) -> Union[str, dict]:
         raise NotImplementedError

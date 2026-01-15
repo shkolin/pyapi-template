@@ -1,2 +1,0 @@
-class SMTPClientError(RuntimeError):
-    pass

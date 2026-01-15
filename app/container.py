@@ -22,17 +22,19 @@ def init_database_session(session_init_factory: scoped_session) -> Generator:
 
 class AppContainer(containers.DeclarativeContainer):
     config: providers.Configuration = providers.Configuration()
-    wiring_config = containers.WiringConfiguration(packages=[
-        'app.endpoint',
-        'app.domain',
-        'app.event'
-    ])
+    wiring_config = containers.WiringConfiguration(
+        packages=[
+            'app.endpoint',
+            'app.domain',
+            'app.event',
+        ]
+    )
     sqlalchemy_engine = providers.Singleton(create_engine, config.db.dsn)
     session_factory = providers.Singleton(
         sessionmaker,
         bind=sqlalchemy_engine,
         expire_on_commit=False,
-        autoflush=False
+        autoflush=False,
     )
     scoped_session = providers.Factory(scoped_session, session_factory)
     session = providers.Resource(
@@ -46,16 +48,14 @@ class AppContainer(containers.DeclarativeContainer):
         project_name=config.project.name,
         project_url=config.project.url,
         project_email=config.project.email,
-
         smtp_host=config.smtp.host,
         smtp_port=config.smtp.port,
         smtp_username=config.smtp.username,
         smtp_password=config.smtp.password,
         smtp_use_tls=config.smtp.use_tls,
-
         jwt_algorithm=config.jwt.algorithm,
         jwt_secret=config.jwt.secret,
-        jwt_ttl=config.jwt.ttl
+        jwt_ttl=config.jwt.ttl,
     )
     repository = providers.Container(RepositoryContainer, session=session)
     handler = providers.Container(
@@ -63,5 +63,5 @@ class AppContainer(containers.DeclarativeContainer):
         repository=repository,
         service=service,
         event_manager=event_manager,
-        unit_of_work=unit_of_work
+        unit_of_work=unit_of_work,
     )

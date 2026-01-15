@@ -8,9 +8,7 @@ class UserMailService(UserMailServiceInterface):
 
     def send_password_reset(self, to: str, username: str, token: str) -> None:
         tpl = self.__mailer.get_template('reset_password_request')
-        self.__mailer.send_message(
-            'Reset Password', to, tpl.render(username=username, token=token)
-        )
+        self.__mailer.send_message('Reset Password', to, tpl.render(username=username, token=token))
 
     def send_welcome(self, to: str, username: str) -> None:
         tpl = self.__mailer.get_template('welcome')
@@ -18,12 +16,8 @@ class UserMailService(UserMailServiceInterface):
 
     def send_login_reset(self, to: str, username: str, token: str) -> None:
         tpl = self.__mailer.get_template('reset_login_request')
-        self.__mailer.send_message(
-            'Reset Login', to, tpl.render(username=username, token=token)
-        )
+        self.__mailer.send_message('Reset Login', to, tpl.render(username=username, token=token))
 
     def send_email_confirmation(self, to: str, username: str, token: str) -> None:
         tpl = self.__mailer.get_template('confirm_email')
-        self.__mailer.send_message(
-            'Confirm email', to, tpl.render(username=username, token=token)
-        )
+        self.__mailer.send_message('Confirm email', to, tpl.render(username=username, token=token))
