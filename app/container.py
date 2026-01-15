@@ -1,15 +1,11 @@
-from typing import Generator
-
 from argon2 import PasswordHasher
 from dependency_injector import containers
 from dependency_injector import providers
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 
 from app.event.manager import EventManager
 from app.handler.container import HandlerContainer
-from app.repository.container import RepositoryContainer
 from app.service.container import ServiceContainer
 from app.uow import UnitOfWork
 
