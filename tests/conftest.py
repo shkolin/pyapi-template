@@ -51,4 +51,4 @@ def user_factory(faker: Faker) -> Callable[..., User]:
 
 @pytest.fixture
 def session_factory(di_container: AppContainer) -> Callable[..., Session]:
-    return di_container.scoped_session()
+    return di_container.session_factory()

@@ -18,20 +18,20 @@ from app.mapping.base import BaseMetaData
 UserTable = Table(
     'users',
     BaseMetaData,
-    Column('id', UUID(True), primary_key=True, index=True),
+    Column('id', UUID, primary_key=True, index=True),
     Column('email', String, unique=True, nullable=False),
     Column('password_hash', String, nullable=False),
     Column('name', String, nullable=False),
     Column('last_login_date', DateTime, nullable=True),
     Column('email_verified', Boolean, nullable=False, server_default=false()),
     Column('date_created', DateTime, nullable=False),
-    Column('date_updated', DateTime)
+    Column('date_updated', DateTime),
 )
 
 LoginResetRequestTable = Table(
     'login_reset_requests',
     BaseMetaData,
-    Column('id', UUID(True), primary_key=True, index=True),
+    Column('id', UUID, primary_key=True, index=True),
     Column(
         'user_id',
         ForeignKey('users.id', ondelete='CASCADE'),
@@ -43,13 +43,13 @@ LoginResetRequestTable = Table(
     Column('new_login', String, nullable=False),
     Column('is_used', Boolean, nullable=False, server_default=false()),
     Column('date_requested', DateTime, nullable=False),
-    Column('date_used', DateTime, nullable=True)
+    Column('date_used', DateTime, nullable=True),
 )
 
 PasswordResetRequestTable = Table(
     'password_reset_requests',
     BaseMetaData,
-    Column('id', UUID(True), primary_key=True, index=True),
+    Column('id', UUID, primary_key=True, index=True),
     Column(
         'user_id',
         ForeignKey('users.id', ondelete='CASCADE'),
@@ -59,7 +59,7 @@ PasswordResetRequestTable = Table(
     Column('token', String, nullable=False, index=True),
     Column('is_used', Boolean, nullable=False, server_default=false()),
     Column('date_requested', DateTime, nullable=False),
-    Column('date_used', DateTime, nullable=True)
+    Column('date_used', DateTime, nullable=True),
 )
 
 
@@ -73,33 +73,31 @@ def perform_mapping() -> None:
                 PasswordResetRequest,
                 uselist=True,
                 cascade='all, delete-orphan',
-                back_populates='user'
+                back_populates='user',
             ),
             'login_reset_requests': relationship(
                 LoginResetRequest,
                 uselist=True,
                 cascade='all, delete-orphan',
-                back_populates='user'
+                back_populates='user',
             ),
             'events_log': relationship(
                 EventLog,
                 uselist=True,
                 cascade='all, delete-orphan',
-                back_populates='user'
-            )
-        }
+                back_populates='user',
+            ),
+        },
     )
     mapper_registry.map_imperatively(
         PasswordResetRequest,
         PasswordResetRequestTable,
         properties={
             'user': relationship(User, back_populates='password_reset_requests')
-        }
+        },
     )
     mapper_registry.map_imperatively(
         LoginResetRequest,
         LoginResetRequestTable,
-        properties={
-            'user': relationship(User, back_populates='login_reset_requests')
-        }
+        properties={'user': relationship(User, back_populates='login_reset_requests')},
     )

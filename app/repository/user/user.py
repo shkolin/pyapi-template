@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import select
@@ -34,7 +35,7 @@ class UserRepository(BaseRepository[User], UserRepositoryInterface):
         found = self._session.execute(
             select(PasswordResetRequest).where(
                 PasswordResetRequestTable.c.token == token,
-                PasswordResetRequestTable.c.is_used.is_not(True)
+                PasswordResetRequestTable.c.is_used.is_not(True),
             )
         ).scalar_one_or_none()
         if not found:
@@ -45,7 +46,7 @@ class UserRepository(BaseRepository[User], UserRepositoryInterface):
         found = self._session.execute(
             select(LoginResetRequest).where(
                 LoginResetRequestTable.c.token == token,
-                LoginResetRequestTable.c.is_used.is_not(True)
+                LoginResetRequestTable.c.is_used.is_not(True),
             )
         ).scalar_one_or_none()
         if not found:

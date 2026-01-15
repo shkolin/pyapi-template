@@ -13,7 +13,6 @@ from app.uow import UnitOfWork
 
 class HandlerContainer(containers.DeclarativeContainer):
     service = providers.DependenciesContainer()
-    repository = providers.DependenciesContainer()
     event_manager = providers.Dependency(instance_of=EventManager)
     unit_of_work = providers.Dependency(instance_of=UnitOfWork)
 

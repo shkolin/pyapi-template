@@ -14,12 +14,6 @@ from app.service.container import ServiceContainer
 from app.uow import UnitOfWork
 
 
-def init_database_session(session_init_factory: scoped_session) -> Generator:
-    session = session_init_factory()
-    yield session
-    session_init_factory.remove()
-
-
 class AppContainer(containers.DeclarativeContainer):
     config: providers.Configuration = providers.Configuration()
     wiring_config = containers.WiringConfiguration(
@@ -36,11 +30,7 @@ class AppContainer(containers.DeclarativeContainer):
         expire_on_commit=False,
         autoflush=False,
     )
-    scoped_session = providers.Factory(scoped_session, session_factory)
-    session = providers.Resource(
-        init_database_session, session_init_factory=scoped_session
-    )
-    unit_of_work = providers.Factory(UnitOfWork, session=session)
+    unit_of_work = providers.Factory(UnitOfWork, session_factory=session_factory)
     event_manager = providers.Factory(EventManager)
     password_hasher = providers.Factory(PasswordHasher)
     service = providers.Container(
@@ -57,10 +47,8 @@ class AppContainer(containers.DeclarativeContainer):
         jwt_secret=config.jwt.secret,
         jwt_ttl=config.jwt.ttl,
     )
-    repository = providers.Container(RepositoryContainer, session=session)
     handler = providers.Container(
         HandlerContainer,
-        repository=repository,
         service=service,
         event_manager=event_manager,
         unit_of_work=unit_of_work,
