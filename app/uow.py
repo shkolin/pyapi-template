@@ -28,10 +28,10 @@ class UnitOfWorkInterface(ABC):
 
     @abstractmethod
     def __exit__(
-            self,
-            exc_type: Optional[Type[BaseException]],
-            exc_val: Optional[BaseException],
-            exc_tb: Optional[TracebackType]
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
     ) -> None:
         raise NotImplementedError
 
@@ -63,10 +63,10 @@ class UnitOfWork(UnitOfWorkInterface):
         return self
 
     def __exit__(
-            self,
-            exc_type: Optional[Type[BaseException]],
-            exc_val: Optional[BaseException],
-            exc_tb: Optional[TracebackType]
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
     ) -> None:
         try:
             if exc_type:
@@ -77,7 +77,6 @@ class UnitOfWork(UnitOfWorkInterface):
             raise PersistenceError(str(e))
         finally:
             self.close()
-            return None
 
     def begin(self) -> None:
         if not self.__entered:
