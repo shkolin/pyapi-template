@@ -41,9 +41,10 @@ LoginResetRequestTable = Table(
     Column('token', String, nullable=False, index=True),
     Column('old_login', String, nullable=False),
     Column('new_login', String, nullable=False),
-    Column('is_used', Boolean, nullable=False, server_default=false()),
-    Column('date_requested', DateTime, nullable=False),
-    Column('date_used', DateTime, nullable=True),
+    Column('status', String, nullable=False),
+    Column('requested_at', DateTime, nullable=False),
+    Column('processed_at', DateTime, nullable=True),
+    Column('expires_at', DateTime, nullable=False),
 )
 
 PasswordResetRequestTable = Table(
@@ -57,9 +58,10 @@ PasswordResetRequestTable = Table(
         index=True,
     ),
     Column('token', String, nullable=False, index=True),
-    Column('is_used', Boolean, nullable=False, server_default=false()),
-    Column('date_requested', DateTime, nullable=False),
-    Column('date_used', DateTime, nullable=True),
+    Column('status', String, nullable=False),
+    Column('requested_at', DateTime, nullable=False),
+    Column('processed_at', DateTime, nullable=True),
+    Column('expires_at', DateTime, nullable=False),
 )
 
 

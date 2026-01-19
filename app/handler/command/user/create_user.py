@@ -36,14 +36,16 @@ class CreateUserCommandHandler(CommandHandlerInterface):
                     UserEmail(command.email),
                     UserPassword(command.plain_password),
                 )
-                login_reset = user.reset_login_request(UserEmail(command.email))
+                confirm_email_request = user.reset_login_request(
+                    UserEmail(command.email)
+                )
                 uow.get_repository(UserRepository).add(user)
 
             self.__event_manager.notify(
                 UserEvent.REGISTERED, user, payload=command, user=user
             )
             self.__user_mailer.send_email_confirmation(
-                user.email, user.name, login_reset.token
+                user.email, user.name, confirm_email_request.token
             )
         except PersistenceError:
             raise DomainError('Failed to create user')

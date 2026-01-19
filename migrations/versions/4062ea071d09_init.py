@@ -1,8 +1,8 @@
 """Init
 
-Revision ID: b0fa27136b13
+Revision ID: 4062ea071d09
 Revises: 
-Create Date: 2025-04-30 12:49:14.453734
+Create Date: 2026-01-19 16:47:23.900945
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'b0fa27136b13'
+revision: str = '4062ea071d09'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -67,9 +67,10 @@ def upgrade() -> None:
     sa.Column('token', sa.String(), nullable=False),
     sa.Column('old_login', sa.String(), nullable=False),
     sa.Column('new_login', sa.String(), nullable=False),
-    sa.Column('is_used', sa.Boolean(), server_default=sa.text('false'), nullable=False),
-    sa.Column('date_requested', sa.DateTime(), nullable=False),
-    sa.Column('date_used', sa.DateTime(), nullable=True),
+    sa.Column('status', sa.String(), nullable=False),
+    sa.Column('requested_at', sa.DateTime(), nullable=False),
+    sa.Column('processed_at', sa.DateTime(), nullable=True),
+    sa.Column('expires_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -80,9 +81,10 @@ def upgrade() -> None:
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('user_id', sa.UUID(), nullable=False),
     sa.Column('token', sa.String(), nullable=False),
-    sa.Column('is_used', sa.Boolean(), server_default=sa.text('false'), nullable=False),
-    sa.Column('date_requested', sa.DateTime(), nullable=False),
-    sa.Column('date_used', sa.DateTime(), nullable=True),
+    sa.Column('status', sa.String(), nullable=False),
+    sa.Column('requested_at', sa.DateTime(), nullable=False),
+    sa.Column('processed_at', sa.DateTime(), nullable=True),
+    sa.Column('expires_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )

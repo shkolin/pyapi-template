@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.container import AppContainer
+from app.domain.user.enum import TokenStatus
 from app.domain.user.user import User
 from app.mapping.user import UserTable
 from app.value_object.user import UserEmail
@@ -53,15 +54,21 @@ def test_reset_password_request(
         session.commit()
         session.refresh(user)
         assert len(user.password_reset_requests) == 0
+
         response = api_client.post(
             '/reset-password-request', json={'email': user.email}
         )
         assert response.status_code == 200
         assert response.json() == {'status': 'OK'}
+
         session.refresh(user)
         assert len(user.password_reset_requests) == 1
-        assert user.password_reset_requests[0].is_used is False
-        assert user.password_reset_requests[0].date_used is None
+        request = user.password_reset_requests[0]
+
+        assert request.expires_at is not None
+        assert request.processed_at is None
+        assert request.status == TokenStatus.PENDING.value
+
         session.delete(user)
         session.commit()
 
@@ -78,12 +85,14 @@ def test_recover_password(
         session.add(user)
         session.commit()
         new_plain_password = 'P@$$w0rd'
+
         response = api_client.post(
             '/recover-password',
             json={'plain_password': new_plain_password, 'token': request.token},
         )
         assert response.status_code == 200
         assert response.json() == {'status': 'OK'}
+
         session.refresh(user)
         assert (
             di_container.password_hasher().verify(
@@ -91,8 +100,12 @@ def test_recover_password(
             )
             is True
         )
+
         session.refresh(request)
-        assert request.is_used is True
+        assert request.expires_at is not None
+        assert request.processed_at is not None
+        assert request.status == TokenStatus.USED.value
+
         session.delete(user)
         session.commit()
 
@@ -119,5 +132,8 @@ def test_confirm_email(
         session.refresh(user)
         assert user.email == new_email
         assert user.email_verified is True
+        assert request.expires_at is not None
+        assert request.processed_at is not None
+        assert request.status == TokenStatus.USED.value
         session.delete(user)
         session.commit()

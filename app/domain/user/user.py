@@ -1,8 +1,9 @@
 import uuid
+from datetime import datetime
+
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError
 from argon2.exceptions import VerifyMismatchError
-from datetime import datetime
 from dependency_injector.wiring import Provide
 from dependency_injector.wiring import inject
 
