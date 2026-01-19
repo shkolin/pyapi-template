@@ -2,6 +2,13 @@ Project database {
     database_type: 'PostgreSQL'
 }
 
+Enum token_status {
+    pending
+    used
+    canceled
+    expired
+}
+
 Table users {
     id uuid [pk]
     email varchar [not null, unique]
@@ -18,9 +25,10 @@ Table password_reset_requests {
     id uuid [pk]
     user_id uuid  [ref: > users.id]
     token varchar [not null]
-    is_used boolean [default: false]
-    date_requested datetime
-    date_used datetime [null]
+    status token_status [not null]
+    requested_at datetime [not null]
+    processed_at datetime [null]
+    expires_at datetime [not null]
 }
 
 Table login_reset_requests {
@@ -29,7 +37,8 @@ Table login_reset_requests {
     token varchar [not null]
     old_login varchar [not null]
     new_login varchar [not null]
-    is_used boolean [default: false]
-    date_requested datetime
-    date_used datetime [null]
+    status token_status [not null]
+    requested_at datetime [not null]
+    processed_at datetime [null]
+    expires_at datetime [not null]
 }
