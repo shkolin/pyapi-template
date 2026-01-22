@@ -24,8 +24,9 @@ UserTable = Table(
     Column('name', String, nullable=False),
     Column('last_login_date', DateTime, nullable=True),
     Column('email_verified', Boolean, nullable=False, server_default=false()),
-    Column('date_created', DateTime, nullable=False),
-    Column('date_updated', DateTime),
+    Column('status', String, nullable=False),
+    Column('created_at', DateTime, nullable=False),
+    Column('updated_at', DateTime),
 )
 
 LoginResetRequestTable = Table(
