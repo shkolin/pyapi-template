@@ -11,5 +11,5 @@ Jinja2==3.1.6
 argon2-cffi==25.1.0
 types-PyYAML==6.0.12.20250915
 httpx==0.28.1
-python-multipart==0.0.21
+python-multipart==0.0.22
 pydantic-settings==2.12.0
