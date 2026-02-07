@@ -1,3 +1,10 @@
+[project]
+name = "pyapi-template"
+version = "0.1.0"
+description = "A production-ready Python API template built with modern tools and best practices."
+authors = [
+]
+
 [tool.pytest.ini_options]
 addopts = [
     "--import-mode=importlib",
@@ -7,10 +14,6 @@ testpaths = [
 ]
 filterwarnings = [
 ]
-
-[tool.pyright]
-venvPath = "./venv"
-venv = "./"
 
 [tool.mypy]
 plugins = ["sqlalchemy.ext.mypy.plugin"]
@@ -27,10 +30,3 @@ quote-style = "single"
 
 [tool.ruff.lint.isort]
 force-single-line = true
-default-section = "standard-library"
-
-[tool.black]
-skip-string-normalization = true
-
-[tool.isort]
-force_single_line = true

@@ -8,6 +8,7 @@ from dependency_injector.wiring import Provide
 from dependency_injector.wiring import inject
 
 from app.domain.event_log import EventLog
+from app.domain.user.enum import UserStatus
 from app.domain.user.login import LoginResetRequest
 from app.domain.user.password import PasswordResetRequest
 from app.value_object.user import UserEmail
@@ -21,6 +22,7 @@ class User:
         name: UserName,
         email: UserEmail,
         plain_password: UserPassword,
+        status: UserStatus = UserStatus.ACTIVE,
     ) -> None:
         self.id = uuid.uuid4()
         self.email = str(email)
@@ -28,9 +30,10 @@ class User:
         self.name = str(name)
         self.last_login_date: datetime | None = None
         self.email_verified = False
+        self.status = status.value
 
-        self.date_created: datetime = datetime.now()
-        self.date_updated: datetime | None = None
+        self.created_at: datetime = datetime.now()
+        self.updated_at: datetime | None = None
 
         self.password_reset_requests: list[PasswordResetRequest] = []
         self.login_reset_requests: list[LoginResetRequest] = []
@@ -42,6 +45,10 @@ class User:
         password_hasher: PasswordHasher = Provide['password_hasher'],
     ) -> PasswordHasher:
         return password_hasher
+
+    @property
+    def is_active(self) -> bool:
+        return self.status == UserStatus.ACTIVE.value
 
     def verify_password(self, plain_password: str) -> bool:
         try:

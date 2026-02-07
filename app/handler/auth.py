@@ -14,11 +14,7 @@ from app.uow import UnitOfWorkInterface
 
 
 class AuthorizationViaCredentialsCommandHandler(CommandHandlerInterface):
-    def __init__(
-            self,
-            uow: UnitOfWorkInterface,
-            jwt: JWTServiceInterface
-    ) -> None:
+    def __init__(self, uow: UnitOfWorkInterface, jwt: JWTServiceInterface) -> None:
         self.__uow = uow
         self.__jwt = jwt
 
@@ -26,25 +22,21 @@ class AuthorizationViaCredentialsCommandHandler(CommandHandlerInterface):
         try:
             with self.__uow as uow:
                 user = uow.get_repository(UserRepository).get_by_login(command.login)
+                if not user.is_active:
+                    raise AuthorizationError('Account deactivated')
                 if not user.verify_password(command.plain_password):
                     raise AuthorizationError('Invalid login or password')
                 if not user.email_verified:
                     raise AuthorizationError('Email not verified')
                 user.update_last_login_date()
-        except (UserNotFoundError,
-                AuthorizationError,
-                PersistenceError):
+        except (UserNotFoundError, AuthorizationError, PersistenceError):
             raise DomainError('Failed to authorization')
 
         return Token(**self.__jwt.encode(user.id).model_dump())
 
 
 class AuthorizationViaTokenCommandHandler(CommandHandlerInterface):
-    def __init__(
-            self,
-            uow: UnitOfWorkInterface,
-            jwt: JWTServiceInterface
-    ) -> None:
+    def __init__(self, uow: UnitOfWorkInterface, jwt: JWTServiceInterface) -> None:
         self.__uow = uow
         self.__jwt = jwt
 
