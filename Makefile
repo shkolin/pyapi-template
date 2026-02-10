@@ -23,4 +23,4 @@ functional_test:
 unit_test:
 	$(PYTHON) -m pytest tests/unit
 
-tests: functional_test
+tests: functional_test unit_test

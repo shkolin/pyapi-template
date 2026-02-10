@@ -60,7 +60,7 @@ class User:
         self.last_login_date = datetime.now()
 
     def update_last_modified_date(self) -> None:
-        self.date_updated = datetime.now()
+        self.updated_at = datetime.now()
 
     def update_password(self, plain_password: UserPassword) -> None:
         self.password_hash = self.__password_hasher().hash(str(plain_password))
