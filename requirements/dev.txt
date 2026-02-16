@@ -4,5 +4,5 @@ pytest==9.0.2
 pytest-mock==3.15.1
 Faker==40.4.0
 mypy==1.19.1
-ruff==0.15.0
+ruff==0.15.1
 aiosmtpd==1.4.6
