@@ -20,5 +20,5 @@ class PasswordHasher(PasswordHasherInterface):
     def verify(self, hash: str, password: str) -> bool:
         try:
             return self.__provider.verify(hash, password)
-        except VerifyMismatchError, VerificationError, InvalidHashError:
+        except (VerifyMismatchError, VerificationError, InvalidHashError):
             return False
