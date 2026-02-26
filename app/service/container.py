@@ -4,6 +4,7 @@ from dependency_injector import providers
 from app.service.jwt import JWTService
 from app.service.mail.user import UserMailService
 from app.service.mailer.smtp.client import SMTPClient
+from app.service.security.password_hasher.password_hasher import PasswordHasher
 from app.service.templater import Templater
 
 
@@ -22,12 +23,8 @@ class ServiceContainer(containers.DeclarativeContainer):
     jwt_secret = providers.Dependency(instance_of=str)
     jwt_ttl = providers.Dependency(instance_of=int)
 
-    jwt = providers.Factory(
-        JWTService, algorithms=jwt_algorithm, secret=jwt_secret, ttl=jwt_ttl
-    )
-
+    jwt = providers.Factory(JWTService, algorithms=jwt_algorithm, secret=jwt_secret, ttl=jwt_ttl)
     templater = providers.Factory(Templater, project_url=project_url)
-
     mailer = providers.Factory(
         SMTPClient,
         host=smtp_host,
@@ -39,5 +36,5 @@ class ServiceContainer(containers.DeclarativeContainer):
         from_email=project_email,
         from_name=project_name,
     )
-
     user_mailer = providers.Factory(UserMailService, mailer=mailer)
+    password_hasher = providers.Singleton(PasswordHasher)

@@ -1,16 +1,15 @@
 import uuid
 from datetime import datetime
 
-from argon2 import PasswordHasher
-from argon2.exceptions import InvalidHashError
-from argon2.exceptions import VerifyMismatchError
 from dependency_injector.wiring import Provide
 from dependency_injector.wiring import inject
+from sqlalchemy.orm import reconstructor
 
 from app.domain.event_log import EventLog
 from app.domain.user.enum import UserStatus
 from app.domain.user.login import LoginResetRequest
 from app.domain.user.password import PasswordResetRequest
+from app.service.security.password_hasher.interface import PasswordHasherInterface
 from app.value_object.user import UserEmail
 from app.value_object.user import UserName
 from app.value_object.user import UserPassword
@@ -22,11 +21,11 @@ class User:
         name: UserName,
         email: UserEmail,
         plain_password: UserPassword,
+        password_hasher: PasswordHasherInterface,
         status: UserStatus = UserStatus.ACTIVE,
     ) -> None:
         self.id = uuid.uuid4()
         self.email = str(email)
-        self.password_hash = self.__password_hasher().hash(str(plain_password))
         self.name = str(name)
         self.last_login_date: datetime | None = None
         self.email_verified = False
@@ -39,22 +38,23 @@ class User:
         self.login_reset_requests: list[LoginResetRequest] = []
         self.events_log: list[EventLog] = []
 
-    @staticmethod
+        self.password_hash = password_hasher.hash(str(plain_password))
+        self.__password_hasher = password_hasher
+
     @inject
-    def __password_hasher(
-        password_hasher: PasswordHasher = Provide['password_hasher'],
-    ) -> PasswordHasher:
-        return password_hasher
+    @reconstructor
+    def __orm_init__(
+        self,
+        hasher: PasswordHasherInterface = Provide['service.password_hasher'],
+    ) -> None:
+        self.__password_hasher = hasher
 
     @property
     def is_active(self) -> bool:
         return self.status == UserStatus.ACTIVE.value
 
     def verify_password(self, plain_password: str) -> bool:
-        try:
-            return self.__password_hasher().verify(self.password_hash, plain_password)
-        except (VerifyMismatchError, InvalidHashError):
-            return False
+        return self.__password_hasher.verify(self.password_hash, plain_password)
 
     def update_last_login_date(self) -> None:
         self.last_login_date = datetime.now()
@@ -63,7 +63,7 @@ class User:
         self.updated_at = datetime.now()
 
     def update_password(self, plain_password: UserPassword) -> None:
-        self.password_hash = self.__password_hasher().hash(str(plain_password))
+        self.password_hash = self.__password_hasher.hash(str(plain_password))
 
     def update_email(self, email: UserEmail) -> None:
         self.email = str(email)

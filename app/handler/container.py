@@ -21,12 +21,15 @@ class HandlerContainer(containers.DeclarativeContainer):
         user_mailer=service.user_mailer,
         event_manager=event_manager,
         uow=unit_of_work,
+        password_hasher=service.password_hasher,
     )
     authorization_via_credentials = providers.Factory(
         AuthorizationViaCredentialsCommandHandler, uow=unit_of_work, jwt=service.jwt
     )
     authorization_via_token = providers.Factory(
-        AuthorizationViaTokenCommandHandler, uow=unit_of_work, jwt=service.jwt
+        AuthorizationViaTokenCommandHandler,
+        uow=unit_of_work,
+        jwt=service.jwt,
     )
     reset_password_request = providers.Factory(
         ResetPasswordRequestCommandHandler,
@@ -34,9 +37,9 @@ class HandlerContainer(containers.DeclarativeContainer):
         user_mailer=service.user_mailer,
         event_manager=event_manager,
     )
-    recover_password = providers.Factory(
-        RecoverPasswordCommandHandler, uow=unit_of_work
-    )
+    recover_password = providers.Factory(RecoverPasswordCommandHandler, uow=unit_of_work)
     confirm_email = providers.Factory(
-        ConfirmEmailCommandHandler, uow=unit_of_work, user_mailer=service.user_mailer
+        ConfirmEmailCommandHandler,
+        uow=unit_of_work,
+        user_mailer=service.user_mailer,
     )

@@ -1,4 +1,3 @@
-from argon2 import PasswordHasher
 from dependency_injector import containers
 from dependency_injector import providers
 from sqlalchemy import create_engine
@@ -28,7 +27,6 @@ class AppContainer(containers.DeclarativeContainer):
     )
     unit_of_work = providers.Factory(UnitOfWork, session_factory=session_factory)
     event_manager = providers.Factory(EventManager)
-    password_hasher = providers.Factory(PasswordHasher)
     service = providers.Container(
         ServiceContainer,
         project_name=config.project.name,
