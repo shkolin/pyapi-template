@@ -29,15 +29,10 @@ def test_user_creation(
     assert response.status_code == 200
     assert response.json() == {'status': 'OK'}
     with session_factory() as session:
-        user: User | None = session.scalars(
-            select(User).where(UserTable.c.email == email)
-        ).first()
+        user: User | None = session.scalars(select(User).where(UserTable.c.email == email)).first()
         assert user is not None
         assert user.email == email
-        assert (
-            di_container.password_hasher().verify(user.password_hash, plain_password)
-            is True
-        )
+        assert di_container.service.password_hasher().verify(user.password_hash, plain_password) is True
         assert user.name == request_data['name']
         session.delete(user)
         session.commit()
@@ -55,9 +50,7 @@ def test_reset_password_request(
         session.refresh(user)
         assert len(user.password_reset_requests) == 0
 
-        response = api_client.post(
-            '/reset-password-request', json={'email': user.email}
-        )
+        response = api_client.post('/reset-password-request', json={'email': user.email})
         assert response.status_code == 200
         assert response.json() == {'status': 'OK'}
 
@@ -94,12 +87,7 @@ def test_recover_password(
         assert response.json() == {'status': 'OK'}
 
         session.refresh(user)
-        assert (
-            di_container.password_hasher().verify(
-                user.password_hash, new_plain_password
-            )
-            is True
-        )
+        assert di_container.service.password_hasher().verify(user.password_hash, new_plain_password) is True
 
         session.refresh(request)
         assert request.expires_at is not None

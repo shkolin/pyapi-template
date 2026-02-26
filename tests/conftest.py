@@ -38,12 +38,13 @@ def api_client() -> TestClient:
 
 
 @pytest.fixture
-def user_factory(faker: Faker) -> Callable[..., User]:
+def user_factory(faker: Faker, di_container: AppContainer) -> Callable[..., User]:
     def maker(**kwargs: Any) -> User:
         return User(
             UserName(kwargs.get('name', faker.name())),
             UserEmail(kwargs.get('email', faker.email())),
             UserPassword(kwargs.get('plain_password', faker.password())),
+            di_container.service.password_hasher.provided(),
         )
 
     return maker

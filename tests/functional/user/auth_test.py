@@ -22,7 +22,11 @@ def test_authorization_via_credentials(
         session.add(user)
         session.commit()
         response = api_client.post(
-            '/auth', data={'username': user.email, 'password': plain_password}
+            '/auth',
+            data={
+                'username': user.email,
+                'password': plain_password,
+            },
         )
         assert response.status_code == 200
         json = response.json()
