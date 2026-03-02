@@ -1,5 +1,5 @@
 fastapi==0.133.1
-SQLAlchemy==2.0.47
+SQLAlchemy==2.0.48
 dependency-injector==4.48.3
 pydantic==2.12.5
 alembic==1.18.4
