@@ -4,7 +4,7 @@ dependency-injector==4.48.3
 pydantic==2.12.5
 alembic==1.18.4
 psycopg2==2.9.11
-uvicorn==0.41.0
+uvicorn==0.42.0
 PyYAML==6.0.3
 PyJWT==2.11.0
 Jinja2==3.1.6
