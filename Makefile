@@ -15,7 +15,7 @@ lint:
 	$(PYTHON) -m ruff check app tests
 
 typecheck:
-	$(PYTHON) -m mypy app tests
+	$(PYTHON) -m ty check app tests
 
 functional_test:
 	$(PYTHON) -m pytest tests/functional
