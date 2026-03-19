@@ -16,18 +16,16 @@ from app.service.templater.interface import TemplaterInterface
 
 class Templater(TemplaterInterface):
     def __init__(self, project_url: str) -> None:
-        self.__project_url = project_url
         search_path = Path(__file__).parent.parent.parent.parent.absolute() / 'templates'
-        environment = Environment(
-            loader=FileSystemLoader([search_path]),
-            autoescape=True
-        )
-        environment.globals['url'] = self.__url
-        self.jinja_env = environment
+        environment = Environment(loader=FileSystemLoader([search_path]), autoescape=True)
+        environment.globals['url'] = self.__url  # type: ignore[invalid-assignment]
+
+        self.__project_url = project_url
+        self.__jinja_env = environment
 
     def get_template(self, name: str) -> Template:
         try:
-            template = self.jinja_env.get_template(f'{name}.html')
+            template = self.__jinja_env.get_template(f'{name}.html')
         except TemplateNotFound:
             raise TemplateNotFoundError
         return template
