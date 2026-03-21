@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENV: "dev"
+      VIRTUAL_ENV: "venv"
 
     strategy:
       matrix:
@@ -40,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENV: "dev"
+      VIRTUAL_ENV: "venv"
 
     services:
       postgres:
