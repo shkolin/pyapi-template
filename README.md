@@ -40,7 +40,7 @@ app/
 
 ```bash
 # Install dependencies
-pip install -r requirements
+pip install -r requirements/dev.txt
 
 # Copy config
 cp config-dist.yml config.yml
