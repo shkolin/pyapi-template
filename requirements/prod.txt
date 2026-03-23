@@ -1,6 +1,6 @@
-fastapi==0.135.1
+fastapi==0.135.2
 SQLAlchemy==2.0.48
-dependency-injector==4.48.3
+dependency-injector==4.49.0
 pydantic==2.12.5
 alembic==1.18.4
 psycopg2==2.9.11
