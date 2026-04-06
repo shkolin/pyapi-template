@@ -18,7 +18,7 @@ class AppContainer(containers.DeclarativeContainer):
             'app.event',
         ]
     )
-    sqlalchemy_engine = providers.Singleton(create_engine, config.db.dsn)
+    sqlalchemy_engine = providers.Singleton(create_engine, config.db_dsn)
     session_factory = providers.Singleton(
         sessionmaker,
         bind=sqlalchemy_engine,
@@ -29,17 +29,17 @@ class AppContainer(containers.DeclarativeContainer):
     event_manager = providers.Factory(EventManager)
     service = providers.Container(
         ServiceContainer,
-        project_name=config.project.name,
-        project_url=config.project.url,
-        project_email=config.project.email,
-        smtp_host=config.smtp.host,
-        smtp_port=config.smtp.port,
-        smtp_username=config.smtp.username,
-        smtp_password=config.smtp.password,
-        smtp_use_tls=config.smtp.use_tls,
-        jwt_algorithm=config.jwt.algorithm,
-        jwt_secret=config.jwt.secret,
-        jwt_ttl=config.jwt.ttl,
+        project_name=config.project_name,
+        project_url=config.project_url,
+        project_email=config.project_email,
+        smtp_host=config.smtp_host,
+        smtp_port=config.smtp_port,
+        smtp_username=config.smtp_username,
+        smtp_password=config.smtp_password,
+        smtp_use_tls=config.smtp_use_tls,
+        jwt_algorithm=config.jwt_algorithm,
+        jwt_secret=config.jwt_secret,
+        jwt_ttl=config.jwt_ttl,
     )
     handler = providers.Container(
         HandlerContainer,

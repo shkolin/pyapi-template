@@ -1,7 +1,6 @@
-from pathlib import Path
-
 from fastapi import FastAPI
 
+from app.config import Settings
 from app.container import AppContainer
 from app.endpoint.auth.router import router as auth_router
 from app.endpoint.exception import AuthorizationError
@@ -11,14 +10,8 @@ from app.endpoint.user.router import router as user_router
 from app.exception import DomainError
 from app.mapping import perform_mapping
 
-BASE_PATH = Path(__file__).parent.parent.absolute()
-ENV_CONFIG = Path(BASE_PATH / 'config.yml')
-
-if not ENV_CONFIG.exists():
-    raise RuntimeError('Failed to load configuration file')
-
 container = AppContainer()
-container.config.from_yaml(ENV_CONFIG)
+container.config.from_pydantic(Settings())
 
 
 def create_app() -> FastAPI:
