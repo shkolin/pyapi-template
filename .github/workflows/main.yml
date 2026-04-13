@@ -84,6 +84,6 @@ jobs:
 
       - name: Run Migrations & Tests
         run: |
-          cp config-dist.yml config.yml
+          cp .env.example .env
           make migrate
           make tests
